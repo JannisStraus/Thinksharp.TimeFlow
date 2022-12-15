@@ -75,6 +75,20 @@
     }
 
     [TestMethod]
+    public void TestFromDictionary()
+    {
+      var timePoints = Period.Hour.GenerateTimePointSequence(new DateTime(2021, 1, 1)).Take(5).ToDictionary(x => new DateTimeOffset(x.DateTime), x => (decimal?) x.Hour);
+      var ts = TimeSeries.Factory.FromDictionary(timePoints);
+      Assert.AreEqual(5, ts.Count);
+      Assert.AreEqual(new DateTimeOffset(new DateTime(2021, 1, 1)), ts[0].Key);
+      Assert.AreEqual(0M, ts[0].Value);
+      Assert.AreEqual(new DateTimeOffset(new DateTime(2021, 1, 1).AddHours(4)), ts[4].Key);
+      Assert.AreEqual(4M, ts[4].Value);
+
+      Assert.AreEqual(Period.Hour, ts.Frequency);
+    }
+
+    [TestMethod]
     public void TestFromEnumerable()
     {
       var timePoints = Period.Hour.GenerateTimePointSequence(new DateTime(2021, 1, 1)).Take(5).ToList();
